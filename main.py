@@ -24,6 +24,7 @@ flags.DEFINE_boolean("is_crop", False, "True for training, False for testing [Fa
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 FLAGS = flags.FLAGS
 
+
 def main(_):
     pp.pprint(flags.FLAGS.__flags)
 
@@ -34,11 +35,15 @@ def main(_):
 
     with tf.Session() as sess:
         if FLAGS.dataset == 'mnist':
-            dcgan = DCGAN(sess, image_size=FLAGS.image_size, batch_size=FLAGS.batch_size, y_dim=10, output_size=28, c_dim=1,
-                    dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir, sample_dir=FLAGS.sample_dir)
+            dcgan = DCGAN(sess, image_size=FLAGS.image_size, batch_size=FLAGS.batch_size, y_dim=10, output_size=28,
+                          c_dim=1,
+                          dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir,
+                          sample_dir=FLAGS.sample_dir)
         else:
-            dcgan = DCGAN(sess, image_size=FLAGS.image_size, batch_size=FLAGS.batch_size, output_size=FLAGS.output_size, c_dim=FLAGS.c_dim,
-                    dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir, sample_dir=FLAGS.sample_dir)
+            dcgan = DCGAN(sess, image_size=FLAGS.image_size, batch_size=FLAGS.batch_size, output_size=FLAGS.output_size,
+                          c_dim=FLAGS.c_dim,
+                          dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir,
+                          sample_dir=FLAGS.sample_dir)
 
         if FLAGS.is_train:
             dcgan.train(FLAGS)
@@ -55,6 +60,7 @@ def main(_):
             # Below is codes for visualization
             OPTION = 2
             visualize(sess, dcgan, FLAGS, OPTION)
+
 
 if __name__ == '__main__':
     tf.app.run()

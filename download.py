@@ -20,7 +20,8 @@ from six.moves import urllib
 
 parser = argparse.ArgumentParser(description='Download dataset for DCGAN.')
 parser.add_argument('datasets', metavar='N', type=str, nargs='+', choices=['celebA', 'lsun', 'mnist'],
-                   help='name of dataset to download [celebA, lsun, mnist]')
+                    help='name of dataset to download [celebA, lsun, mnist]')
+
 
 def download(url, dirpath):
     filename = url.split('/')[-1]
@@ -43,11 +44,12 @@ def download(url, dirpath):
         downloaded += len(buf)
         f.write(buf)
         status = (("[%-" + str(status_width + 1) + "s] %3.2f%%") %
-            ('=' * int(float(downloaded) / filesize * status_width) + '>', downloaded * 100. / filesize))
+                  ('=' * int(float(downloaded) / filesize * status_width) + '>', downloaded * 100. / filesize))
         print(status, end='')
         sys.stdout.flush()
     f.close()
     return filepath
+
 
 def unzip(filepath):
     print("Extracting: " + filepath)
@@ -55,6 +57,7 @@ def unzip(filepath):
     with zipfile.ZipFile(filepath) as zf:
         zf.extractall(dirpath)
     os.remove(filepath)
+
 
 def download_celeb_a(dirpath):
     data_dir = 'celebA'
@@ -70,10 +73,12 @@ def download_celeb_a(dirpath):
     os.remove(filepath)
     os.rename(os.path.join(dirpath, zip_dir), os.path.join(dirpath, data_dir))
 
+
 def _list_categories(tag):
     url = 'http://lsun.cs.princeton.edu/htbin/list.cgi?tag=' + tag
     f = urllib.request.urlopen(url)
     return json.loads(f.read())
+
 
 def _download_lsun(out_dir, category, set_name, tag):
     url = 'http://lsun.cs.princeton.edu/htbin/download.cgi?tag={tag}' \
@@ -88,6 +93,7 @@ def _download_lsun(out_dir, category, set_name, tag):
     print('Downloading', category, set_name, 'set')
     subprocess.call(cmd)
 
+
 def download_lsun(dirpath):
     data_dir = os.path.join(dirpath, 'lsun')
     if os.path.exists(data_dir):
@@ -97,13 +103,14 @@ def download_lsun(dirpath):
         os.mkdir(data_dir)
 
     tag = 'latest'
-    #categories = _list_categories(tag)
+    # categories = _list_categories(tag)
     categories = ['bedroom']
 
     for category in categories:
         _download_lsun(data_dir, category, 'train', tag)
         _download_lsun(data_dir, category, 'val', tag)
     _download_lsun(data_dir, '', 'test', tag)
+
 
 def download_mnist(dirpath):
     data_dir = os.path.join(dirpath, 'mnist')
@@ -113,11 +120,12 @@ def download_mnist(dirpath):
     else:
         os.mkdir(data_dir)
     url_base = 'http://yann.lecun.com/exdb/mnist/'
-    file_names = ['train-images-idx3-ubyte.gz','train-labels-idx1-ubyte.gz','t10k-images-idx3-ubyte.gz','t10k-labels-idx1-ubyte.gz']
+    file_names = ['train-images-idx3-ubyte.gz', 'train-labels-idx1-ubyte.gz', 't10k-images-idx3-ubyte.gz',
+                  't10k-labels-idx1-ubyte.gz']
     for file_name in file_names:
-        url = (url_base+file_name).format(**locals())
+        url = (url_base + file_name).format(**locals())
         print(url)
-        out_path = os.path.join(data_dir,file_name)
+        out_path = os.path.join(data_dir, file_name)
         cmd = ['curl', url, '-o', out_path]
         print('Downloading ', file_name)
         subprocess.call(cmd)
@@ -125,9 +133,11 @@ def download_mnist(dirpath):
         print('Decompressing ', file_name)
         subprocess.call(cmd)
 
-def prepare_data_dir(path = './data'):
+
+def prepare_data_dir(path='./data'):
     if not os.path.exists(path):
         os.mkdir(path)
+
 
 if __name__ == '__main__':
     args = parser.parse_args()
